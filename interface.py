@@ -8,32 +8,40 @@ def set_cursor(element, cursor):
 #Tema
 sg.theme('LightBlue3')
 
-#Layout
-layout= [
-    [sg.Text('Usuário:')],
-    [sg.Input(key= 'login')],
-    [sg.Text(size= 0, key= 'error_login')],
-    [sg.Text('Senha:')],
-    [sg.Input(key= 'password')],
-    [sg.Text(size= 0, key= 'error_password')],
-    [sg.Button(button_text='Entrar', key= 'login', size= 10)],
-    [sg.Text('Não possui cadastro? Clique aqui!', enable_events= True, expand_x= True, key= 'sign_up', text_color= 'blue', font= ('Helvetica', 10, 'underline'))]
-]
+#Layouts
+#Janela login
+def window_login():
+    layout= [
+        [sg.Text('Usuário:')],
+        [sg.Input(key= 'login')],
+        [sg.Text(size= 0, key= 'error_login')],
+        [sg.Text('Senha:')],
+        [sg.Input(key= 'password')],
+        [sg.Text(size= 0, key= 'error_password')],
+        [sg.Button(button_text='Entrar', key= 'login', size= 10)],
+        [sg.Text('Não possui cadastro? Clique aqui!', enable_events= True, expand_x= True, key= 'sign_up', text_color= 'blue', font= ('Helvetica', 10, 'underline'))]
+    ]
+    return sg.Window('Login', layout= layout, finalize= True)
 
-#Janela
-window= sg.Window('Tela', layout= layout, finalize= True)
+#Janela Cadastro
+def window_sign_up():
+    layout=[
+        [sg.Text('Está vai ser a tela de cadastro do usuário')]
+    ]
+    return sg.Window('Cadastrar', layout= layout, finalize= True)
+
+window_login_, window_sign_up_ = window_login(), None
 
 #Alterando o cursor
-set_cursor(window['sign_up'], 'hand2')
+set_cursor(window_login_['sign_up'], 'hand2')
 
 #leitura
 while True:
-    event, values= window.read()
+    window, event, values= sg.read_all_windows()
     #Ler e reagir aos eventos
     if event == sg.WIN_CLOSED:
         break
-    elif event == 'login':
-        print('Clicou no botão "Login"')
-    elif event == 'sign_up':
-        print('Mover para área de cadastro')
+    if window == window_login_ and event == 'sign_up':
+        window_sign_up_ = window_sign_up()
+        window_login_.hide() #.un_hide() para exibir novamente a janela
     print(values)
