@@ -12,13 +12,12 @@ sg.theme('LightBlue3')
 #Janela login
 def window_login():
     layout= [
+        [sg.Text('Login', expand_x= True ,justification= 'c')],
         [sg.Text('Usuário:')],
-        [sg.Input(key= 'login')],
-        [sg.Text(size= 0, key= 'error_login')],
+        [sg.Input(key= 'login', expand_x= True)],
         [sg.Text('Senha:')],
-        [sg.Input(key= 'password')],
-        [sg.Text(size= 0, key= 'error_password')],
-        [sg.Button(button_text='Entrar', key= 'login', size= 10)],
+        [sg.Input(key= 'password', expand_x= True)],
+        [sg.Button(button_text='Entrar', key= 'login', expand_x= True)],
         [sg.Text('Não possui cadastro? Clique aqui!', enable_events= True, expand_x= True, key= 'sign_up', text_color= 'blue', font= ('Helvetica', 10, 'underline'))]
     ]
     return sg.Window('Login', layout= layout, finalize= True)
