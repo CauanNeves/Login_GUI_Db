@@ -1,4 +1,5 @@
 import PySimpleGUI as sg
+import hashlib
 
 #Alterando cursor
 def set_cursor(element, cursor):
@@ -24,7 +25,8 @@ def main():
     def window_sign_up():
         layout=[
             [sg.Input('Nome de Usuário', expand_x= True, key= '-user-')],
-            [sg.Input('Senha', expand_x= True)],
+            [sg.Input('Senha', expand_x= True, key= '-password-')],
+            [sg.Input('', size=(40, 1), key='hash')],
             [sg.Button('Cadastrar', expand_x= True)]
         ]
 
@@ -42,7 +44,18 @@ def main():
             #Ler e reagir aos eventos
             if event is None:
                 break
-            elif event == sg.WIN_CLOSED:
+
+            password = values['-password-']
+            try:
+                password_utf = password.encode('utf-8')
+                sha1hash = hashlib.sha1()
+                sha1hash.update(password_utf)
+                password_hash = sha1hash.hexdigest()
+                window['hash'].update(password_hash)
+            except:
+                pass
+
+            if event == sg.WIN_CLOSED:
                 break
             elif values['-user-'] == 'usuario':
                 print('Já existe esse nome de usuário')
