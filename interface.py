@@ -29,6 +29,9 @@ def main():
             event, values = window.read()
             if event == sg.WIN_CLOSED:
                 break
+            if event == 'sign_up':
+                window.close()
+                window_sign_up()
 
     #Janela Cadastro
     def window_sign_up():
@@ -75,6 +78,7 @@ def main():
         sha1hash.update(password_utf)
         password_hash = sha1hash.hexdigest()
         return password_hash == a_hash
+
 
     window_login()
 
