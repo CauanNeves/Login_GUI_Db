@@ -19,7 +19,16 @@ def main():
             [sg.Button(button_text='Entrar', key= 'login', expand_x= True)],
             [sg.Text('Não possui cadastro? Clique aqui!', enable_events= True, expand_x= True, key= 'sign_up', text_color= 'blue', font= ('Helvetica', 10, 'underline'))]
         ]
-        return sg.Window('Login', layout= layout, finalize= True)
+        window = sg.Window('Cadastrar', layout= layout,
+                    finalize= True,
+                    auto_size_text=False,
+                    text_justification='l',
+                    return_keyboard_events=True,
+                    grab_anywhere=False)
+        while True:
+            event, values = window.read()
+            if event == sg.WIN_CLOSED:
+                break
 
     #Janela Cadastro
     def window_sign_up():
@@ -60,8 +69,14 @@ def main():
             elif values['-user-'] == 'usuario':
                 print('Já existe esse nome de usuário')
 
+    def PasswordMatches(password, a_hash):
+        password_utf = password.encode('utf-8')
+        sha1hash = hashlib.sha1()
+        sha1hash.update(password_utf)
+        password_hash = sha1hash.hexdigest()
+        return password_hash == a_hash
 
-    window_sign_up()
+    window_login()
 
 if __name__ == '__main__':
     sg.theme('LightBlue3')
