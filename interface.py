@@ -13,11 +13,11 @@ def main():
         layout= [
             [sg.Text('Login', expand_x= True ,justification= 'c')],
             [sg.Text('Usuário:')],
-            [sg.Input(key= 'login', expand_x= True)],
+            [sg.Input(key= '-user-', expand_x= True)],
             [sg.Text('Senha:')],
-            [sg.Input(key= 'password', expand_x= True)],
-            [sg.Button(button_text='Entrar', key= 'login', expand_x= True)],
-            [sg.Text('Não possui cadastro? Clique aqui!', enable_events= True, expand_x= True, key= 'sign_up', text_color= 'blue', font= ('Helvetica', 10, 'underline'))]
+            [sg.Input(key= '-password-', expand_x= True)],
+            [sg.Button(button_text='Entrar', key= '-login-', expand_x= True)],
+            [sg.Text('Não possui cadastro? Clique aqui!', enable_events= True, expand_x= True, key= '-sign_up-', text_color= 'blue', font= ('Helvetica', 10, 'underline'))]
         ]
         window = sg.Window('Cadastrar', layout= layout,
                     finalize= True,
@@ -29,9 +29,15 @@ def main():
             event, values = window.read()
             if event == sg.WIN_CLOSED:
                 break
-            if event == 'sign_up':
+            if event == '-sign_up-':
                 window.close()
                 window_sign_up()
+            if event == '-login-':
+                if values['-user-'] == 'Cauan' and values['-password-'] == 'senha':
+                    print('Login efetuado com sucesso')
+                else:
+                    print('Usuário ou senha inválidos')
+
 
     #Janela Cadastro
     def window_sign_up():
