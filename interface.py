@@ -1,5 +1,8 @@
 import PySimpleGUI as sg
 import hashlib
+from database import Database
+
+db = Database
 
 #Alterando cursor
 def set_cursor(element, cursor):
@@ -83,6 +86,7 @@ def main():
                 while True:
                     if values['-user-'] is not None and values['-password-'] is not None:
                         window.close()
+                        db.add(user= values['-user-'], hash= values['hash'])
                         return values['-user-'], values['hash']
                     else:
                         pass
