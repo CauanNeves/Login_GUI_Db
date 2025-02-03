@@ -2,7 +2,8 @@ import PySimpleGUI as sg
 import hashlib
 from database import Database
 
-db = Database
+db = Database('C:\\db_users\\database.db')  # Instanciando a classe Database
+
 
 #Alterando cursor
 def set_cursor(element, cursor):

@@ -23,7 +23,3 @@ class Database:
             ''')
             #Adicionando dados
             cursor.execute('INSERT INTO users (user, hash) VALUES (?, ?)', (user, hash))
-
-if __name__ == '__main__':
-    db = Database
-    db.add('Cauan', 'deba0172511d5701d964202f4e5de698d5e07c67')
