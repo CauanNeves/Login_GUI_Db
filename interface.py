@@ -30,13 +30,17 @@ def main():
             if event == sg.WIN_CLOSED:
                 break
             if event == '-sign_up-':
-                window.close()
-                window_sign_up()
+                window.hide()
+                user, password = window_sign_up()
+                window.un_hide()
             if event == '-login-':
-                if values['-user-'] == 'Cauan' and values['-password-'] == 'senha':
-                    print('Login efetuado com sucesso')
-                else:
-                    print('Usuário ou senha inválidos')
+                try:
+                    if values['-user-'] == user and PasswordMatches(values['-password-'], password):
+                        print('Login efetuado com sucesso!')
+                    else:
+                        print('Usuário ou senha inválidos')
+                except:
+                    print('Nenhum usuário cadastrado')
 
 
     #Janela Cadastro
@@ -45,7 +49,7 @@ def main():
             [sg.Input('Nome de Usuário', expand_x= True, key= '-user-')],
             [sg.Input('Senha', expand_x= True, key= '-password-')],
             [sg.Input('', size=(40, 1), key='hash')],
-            [sg.Button('Cadastrar', expand_x= True)]
+            [sg.Button('Cadastrar', expand_x= True, key= '-sign_up-')]
         ]
 
         window = sg.Window('Cadastrar', layout= layout,
@@ -75,8 +79,14 @@ def main():
 
             if event == sg.WIN_CLOSED:
                 break
-            elif values['-user-'] == 'usuario':
-                print('Já existe esse nome de usuário')
+            elif event == '-sign_up-':
+                while True:
+                    if values['-user-'] is not None and values['-password-'] is not None:
+                        window.close()
+                        return values['-user-'], values['hash']
+                    else:
+                        pass
+
 
     def PasswordMatches(password, a_hash):
         password_utf = password.encode('utf-8')
