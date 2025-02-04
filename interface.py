@@ -1,6 +1,7 @@
 import PySimpleGUI as sg
 import hashlib
 from database import Database
+from time import sleep
 
 db = Database('C:\\db_users\\database.db')  # Instanciando a classe Database
 if db.table_exists() == False:
@@ -19,7 +20,7 @@ def main():
     #Janela login
     def window_login():
         layout= [
-            [sg.Text('Login', expand_x= True ,justification= 'c')],
+            [sg.Text('Login', expand_x= True ,justification= 'c', font= 'Courier 22 italic bold underline', size= (6, 1))],
             [sg.Text('Usuário:')],
             [sg.Input(key= '-user-', expand_x= True)],
             [sg.Text('Senha:')],
@@ -54,8 +55,11 @@ def main():
     #Janela Cadastro
     def window_sign_up():
         layout=[
-            [sg.Input(default_text= 'Nome de Usuário', expand_x= True, key= '-user-')],
-            [sg.Input(default_text= 'Senha', expand_x= True, key= '-password-')],
+            [sg.Text('Sign In', expand_x= True ,justification= 'c', font= 'Courier 22 italic bold underline', size= (8, 1))],
+            [sg.Text('Nome de usuário:')],
+            [sg.Input(expand_x= True, key= '-user-')],
+            [sg.Text('Senha:')],
+            [sg.Input(expand_x= True, key= '-password-')],
             [sg.Text('', size=(40, 1), key='-msg-', justification= 'l', colors= 'red')],
             [sg.Button('Cadastrar', expand_x= True, key= '-sign_up-')]
         ]
@@ -64,7 +68,7 @@ def main():
                             finalize= True,
                             auto_size_text=False,
                             default_element_size=(20, 1),
-                            text_justification='r',
+                            text_justification='l',
                             return_keyboard_events=True,
                             grab_anywhere=False)
 

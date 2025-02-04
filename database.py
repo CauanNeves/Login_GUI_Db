@@ -10,7 +10,7 @@ class Database:
         self.create_table()  # Criando a tabela no momento da inicialização
 
     def create_table(self):
-        """Cria a tabela 'users' se não existir."""
+        #Cria a tabela 'users' se não existir.
         with sqlite3.connect(self.db_path) as conn:
             cursor = conn.cursor()
             cursor.execute('''
@@ -23,26 +23,26 @@ class Database:
             conn.commit()
 
     def add(self, user, hash):
-        """Adiciona um novo usuário ao banco de dados."""
+        #Adiciona um novo usuário ao banco de dados.
         with sqlite3.connect(self.db_path) as conn:
             cursor = conn.cursor()
             try:
-                cursor.execute("INSERT INTO users (username, password_hash) VALUES (?, ?)", (user, hash))
+                cursor.execute('INSERT INTO users (username, password_hash) VALUES (?, ?)', (user, hash))
                 conn.commit()
                 return True  # Retorna True se o cadastro for bem-sucedido
             except sqlite3.IntegrityError:
                 return False  # Retorna False se o usuário já existir
 
     def get_user(self, username):
-        """Busca o usuário no banco de dados e retorna a hash da senha, se encontrado."""
+        #Busca o usuário no banco de dados e retorna a hash da senha, se encontrado.
         with sqlite3.connect(self.db_path) as conn:
             cursor = conn.cursor()
-            cursor.execute("SELECT password_hash FROM users WHERE username = ?", (username,))
+            cursor.execute('SELECT password_hash FROM users WHERE username = ?', (username,))
             return cursor.fetchone()  # Retorna (password_hash,) ou None
     
     def table_exists(self):
-        """Verifica se a tabela 'users' existe no banco de dados"""
+        #Verifica se a tabela 'users' existe no banco de dados
         with sqlite3.connect(self.db_path) as conn:
             cursor = conn.cursor()
-            cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='users';")
+            cursor.execute('SELECT name FROM sqlite_master WHERE type="table" AND name="users";')
             return cursor.fetchone() is not None  # Retorna True se a tabela existir, False caso contrário
