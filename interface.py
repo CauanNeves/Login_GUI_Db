@@ -23,7 +23,7 @@ def main():
             [sg.Text('Usuário:')],
             [sg.Input(key= '-user-', expand_x= True)],
             [sg.Text('Senha:')],
-            [sg.Input(key= '-password-', expand_x= True)],
+            [sg.Input(key= '-password-', expand_x= True, password_char= '*')],
             [sg.Button(button_text='Entrar', key= '-login-', expand_x= True)],
             [sg.Text('Não possui cadastro? Clique aqui!', enable_events= True, expand_x= True, key= '-sign_up-', text_color= 'blue', font= ('Helvetica', 10, 'underline'))]
         ]
@@ -39,7 +39,7 @@ def main():
                 break
             if event == '-sign_up-':
                 window.hide()
-                user, password = window_sign_up()
+                window_sign_up()
                 window.un_hide()
             if event == '-login-':
                 hash = db.get_user(values['-user-'])
@@ -54,9 +54,9 @@ def main():
     #Janela Cadastro
     def window_sign_up():
         layout=[
-            [sg.Input('Nome de Usuário', expand_x= True, key= '-user-')],
-            [sg.Input('Senha', expand_x= True, key= '-password-')],
-            [sg.Input('', size=(40, 1), key='hash')],
+            [sg.Input(default_text= 'Nome de Usuário', expand_x= True, key= '-user-')],
+            [sg.Input(default_text= 'Senha', expand_x= True, key= '-password-')],
+            [sg.Text('', size=(40, 1), key='-msg-', justification= 'l', colors= 'red')],
             [sg.Button('Cadastrar', expand_x= True, key= '-sign_up-')]
         ]
 
@@ -81,24 +81,21 @@ def main():
                 sha1hash = hashlib.sha1()
                 sha1hash.update(password_utf)
                 password_hash = sha1hash.hexdigest()
-                window['hash'].update(password_hash)
             except:
                 pass
 
             if event == sg.WIN_CLOSED:
                 break
             elif event == '-sign_up-':
-                while True:
-                    if values['-user-'] != '' and values['-password-'] != '':
-                        window.close()
-                        user_create = db.add(user= values['-user-'], hash= values['hash'])
-                        if user_create ==  True:
-                            print('User criado com sucesso!')
-                            return values['-user-'], values['hash']
-                        else:
-                            print('User existente')                        
+                if values['-user-'] != '' and values['-password-'] != '':
+                    window.close()
+                    user_create = db.add(user= values['-user-'], hash= password_hash)
+                    if user_create ==  True:
+                        print('User criado com sucesso!')
                     else:
-                        print('Preencha os campos acima!')
+                        print('User existente')                      
+                else:
+                    window['-msg-'].update('Preencha os campos acima!')
 
     def PasswordMatches(password, a_hash):
         password_utf = password.encode('utf-8')
@@ -113,6 +110,3 @@ def main():
 if __name__ == '__main__':
     sg.theme('LightBlue3')
     main()
-    
-#Cauan
-#Senha.123
