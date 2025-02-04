@@ -3,6 +3,10 @@ import hashlib
 from database import Database
 
 db = Database('C:\\db_users\\database.db')  # Instanciando a classe Database
+if db.table_exists() == False:
+    db.create_table()
+else:
+    pass
 
 
 #Alterando cursor
@@ -38,13 +42,13 @@ def main():
                 user, password = window_sign_up()
                 window.un_hide()
             if event == '-login-':
-                try:
-                    if values['-user-'] == user and PasswordMatches(values['-password-'], password):
-                        print('Login efetuado com sucesso!')
-                    else:
-                        print('Usuário ou senha inválidos')
-                except:
-                    print('Nenhum usuário cadastrado')
+                hash = db.get_user(values['-user-'])
+                if hash is not None:
+                    if PasswordMatches(password= values['-password-'], a_hash= hash[0]):
+                        sg.popup('Login Efetuado com sucesso!')
+                        window.close()
+                else:
+                    sg.popup('Usuário não encontrado')
 
 
     #Janela Cadastro
@@ -85,13 +89,16 @@ def main():
                 break
             elif event == '-sign_up-':
                 while True:
-                    if values['-user-'] is not None and values['-password-'] is not None:
+                    if values['-user-'] != '' and values['-password-'] != '':
                         window.close()
-                        db.add(user= values['-user-'], hash= values['hash'])
-                        return values['-user-'], values['hash']
+                        user_create = db.add(user= values['-user-'], hash= values['hash'])
+                        if user_create ==  True:
+                            print('User criado com sucesso!')
+                            return values['-user-'], values['hash']
+                        else:
+                            print('User existente')                        
                     else:
-                        pass
-
+                        print('Preencha os campos acima!')
 
     def PasswordMatches(password, a_hash):
         password_utf = password.encode('utf-8')
@@ -106,3 +113,6 @@ def main():
 if __name__ == '__main__':
     sg.theme('LightBlue3')
     main()
+    
+#Cauan
+#Senha.123
