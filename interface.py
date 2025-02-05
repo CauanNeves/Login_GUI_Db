@@ -1,116 +1,87 @@
 import PySimpleGUI as sg
-import hashlib
+import bcrypt
 from database import Database
-from time import sleep
 
 db = Database('C:\\db_users\\database.db')  # Instanciando a classe Database
-if db.table_exists() == False:
+if not db.table_exists():
     db.create_table()
-else:
-    pass
 
+# Funções de Senha
+def hash_password(password):
+    salt = bcrypt.gensalt()
+    return bcrypt.hashpw(password.encode(), salt)
 
-#Alterando cursor
-def set_cursor(element, cursor):
-    widget= element.Widget
-    widget.configure(cursor=cursor)
+def verify_password(password, hashed):
+    return bcrypt.checkpw(password.encode(), hashed)
 
-#Layouts
-def main():
-    #Janela login
-    def window_login():
-        layout= [
-            [sg.Text('Login', expand_x= True ,justification= 'c', font= 'Courier 22 italic bold underline', size= (6, 1))],
-            [sg.Text('Usuário:')],
-            [sg.Input(key= '-user-', expand_x= True)],
-            [sg.Text('Senha:')],
-            [sg.Input(key= '-password-', expand_x= True, password_char= '*')],
-            [sg.Button(button_text='Entrar', key= '-login-', expand_x= True)],
-            [sg.Text('Não possui cadastro? Clique aqui!', enable_events= True, expand_x= True, key= '-sign_up-', text_color= 'blue', font= ('Helvetica', 10, 'underline'))]
-        ]
-        window = sg.Window('Cadastrar', layout= layout,
-                    finalize= True,
-                    auto_size_text=False,
-                    text_justification='l',
-                    return_keyboard_events=True,
-                    grab_anywhere=False)
-        while True:
-            event, values = window.read()
-            if event == sg.WIN_CLOSED:
-                break
-            if event == '-sign_up-':
-                window.hide()
-                window_sign_up()
-                window.un_hide()
-            if event == '-login-':
-                hash = db.get_user(values['-user-'])
-                if hash is not None:
-                    if PasswordMatches(password= values['-password-'], a_hash= hash[0]):
-                        sg.popup('Login Efetuado com sucesso!')
-                        window.close()
-                else:
-                    sg.popup('Usuário não encontrado')
+# Janela de Login
+def window_login():
+    layout = [
+        [sg.Text('Login', expand_x=True, justification='c', font='Courier 22 italic bold underline')],
+        [sg.Text('Usuário:')],
+        [sg.Input(key='-user-', expand_x=True)],
+        [sg.Text('Senha:')],
+        [sg.Input(key='-password-', expand_x=True, password_char='*')],
+        [sg.Button('Entrar', key='-login-', expand_x=True)],
+        [sg.Text('Não possui cadastro? Clique aqui!', enable_events=True, expand_x=True, key='-sign_up-', text_color='blue', font=('Helvetica', 10, 'underline'))]
+    ]
 
+    window = sg.Window('Login', layout, finalize=True)
 
-    #Janela Cadastro
-    def window_sign_up():
-        layout=[
-            [sg.Text('Sign In', expand_x= True ,justification= 'c', font= 'Courier 22 italic bold underline', size= (8, 1))],
-            [sg.Text('Nome de usuário:')],
-            [sg.Input(expand_x= True, key= '-user-')],
-            [sg.Text('Senha:')],
-            [sg.Input(expand_x= True, key= '-password-')],
-            [sg.Text('', size=(40, 1), key='-msg-', justification= 'l', colors= 'red')],
-            [sg.Button('Cadastrar', expand_x= True, key= '-sign_up-')]
-        ]
-
-        window = sg.Window('Cadastrar', layout= layout,
-                            finalize= True,
-                            auto_size_text=False,
-                            default_element_size=(20, 1),
-                            text_justification='l',
-                            return_keyboard_events=True,
-                            grab_anywhere=False)
-
-        #leitura
-        while True:
-            event, values= window.read()
-            #Ler e reagir aos eventos
-            if event is None:
-                break
-
+    while True:
+        event, values = window.read()
+        if event == sg.WIN_CLOSED:
+            break
+        if event == '-sign_up-':
+            window.hide()
+            window_sign_up()
+            window.un_hide()
+        if event == '-login-':
+            user = values['-user-']
             password = values['-password-']
-            try:
-                password_utf = password.encode('utf-8')
-                sha1hash = hashlib.sha1()
-                sha1hash.update(password_utf)
-                password_hash = sha1hash.hexdigest()
-            except:
-                pass
+            stored_hash = db.get_user(user)
 
-            if event == sg.WIN_CLOSED:
-                break
-            elif event == '-sign_up-':
-                if values['-user-'] != '' and values['-password-'] != '':
-                    window.close()
-                    user_create = db.add(user= values['-user-'], hash= password_hash)
-                    if user_create ==  True:
-                        print('User criado com sucesso!')
-                    else:
-                        print('User existente')                      
-                else:
-                    window['-msg-'].update('Preencha os campos acima!')
+            if stored_hash and verify_password(password, stored_hash[0].encode()):
+                sg.popup('Login Efetuado com sucesso!')
+                window.close()
+            else:
+                sg.popup('Usuário ou senha incorretos!')
 
-    def PasswordMatches(password, a_hash):
-        password_utf = password.encode('utf-8')
-        sha1hash = hashlib.sha1()
-        sha1hash.update(password_utf)
-        password_hash = sha1hash.hexdigest()
-        return password_hash == a_hash
+# Janela de Cadastro
+def window_sign_up():
+    layout = [
+        [sg.Text('Cadastro', expand_x=True, justification='c', font='Courier 22 italic bold underline')],
+        [sg.Text('Nome de usuário:')],
+        [sg.Input(expand_x=True, key='-user-')],
+        [sg.Text('Senha:')],
+        [sg.Input(expand_x=True, key='-password-', password_char='*')],
+        [sg.Text('', size=(40, 1), key='-msg-', text_color='red')],
+        [sg.Button('Cadastrar', expand_x=True, key='-sign_up-')]
+    ]
 
+    window = sg.Window('Cadastro', layout, finalize=True)
 
-    window_login()
+    while True:
+        event, values = window.read()
+        if event in (sg.WIN_CLOSED, None):
+            break
 
+        user = values['-user-']
+        password = values['-password-']
+
+        if not user or not password:
+            window['-msg-'].update('Preencha os campos acima!')
+            continue
+
+        hashed_password = hash_password(password)
+
+        if db.add(user, hashed_password.decode()):
+            sg.popup('Usuário cadastrado com sucesso!')
+            window.close()
+        else:
+            sg.popup('Usuário já existe!')
+
+# Executar
 if __name__ == '__main__':
     sg.theme('LightBlue3')
-    main()
+    window_login()
